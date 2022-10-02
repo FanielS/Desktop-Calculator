@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 
 public class Parser {
 
-    static int prec(char c) {
+    static int getPrecedence(char c) {
         switch (c) {
             case '\u002B':
             case '-':
@@ -27,17 +27,15 @@ public class Parser {
                 res.append(exp.charAt(i));
             } else {
                 res.append(' ');
-                while (!stack.isEmpty() && prec(exp.charAt(i)) <= prec(stack.peek())) {
-                    res.append(stack.peek());
-                    stack.pop();
+                while (!stack.isEmpty() && getPrecedence(exp.charAt(i)) <= getPrecedence(stack.peek())) {
+                    res.append(stack.pop());
                 }
                 stack.push(exp.charAt(i));
             }
         }
 
         while (!stack.isEmpty()) {
-            res.append(stack.peek());
-            stack.pop();
+            res.append(stack.pop());
         }
         return res.toString();
     }
@@ -49,16 +47,14 @@ public class Parser {
         for (int i = 0; i < postFix.length(); i++) {
             char c = postFix.charAt(i);
 
-            if (c == ' ') {
-                continue;
-            }
+            if (c == ' ') continue;
+
             else if (Character.isDigit(c)) {
                 String n = "";
                 while (Character.isDigit(c) || c == '.') {
                     n += c;
                     i++;
-                    c = input.charAt(i);
-                    System.out.println(c);
+                    c = postFix.charAt(i);
                 }
                 i--;
                 stack.push(Double.parseDouble(n));

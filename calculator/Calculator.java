@@ -4,8 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayDeque;
-import java.util.Deque;
+
 import java.util.Objects;
 
 public class Calculator extends JFrame implements ActionListener {
@@ -64,7 +63,7 @@ public class Calculator extends JFrame implements ActionListener {
         } else if (Objects.equals(value, "C")) {
             EquationLabel.setText("");
             ResultLabel.setText("0");
-        } else if (value == "Del") {
+        } else if (Objects.equals(value, "Del")) {
             EquationLabel.setText(input.substring(0, input.length() - 1));
         }
         else {
