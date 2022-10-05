@@ -1,5 +1,6 @@
 package calculator;
 
+import java.awt.*;
 import java.util.ArrayDeque;
 
 public class Parser {
@@ -67,7 +68,13 @@ public class Parser {
                 switch (c) {
                     case '\u002B' -> stack.push(a + b);
                     case '-' -> stack.push(a - b);
-                    case '\u00F7' -> stack.push(a / b);
+                    case '\u00F7' -> {
+                        if (b == 0) {
+                            Calculator.EquationLabel.setForeground(Color.RED.darker());
+                            return "ERROR";
+                        }
+                        stack.push(a / b);
+                    }
                     case '\u00D7' -> stack.push(a * b);
                 }
             }
