@@ -30,6 +30,7 @@ public class Calculator extends JFrame implements ActionListener {
 
         EquationLabel.setName("EquationLabel");
         EquationLabel.setFont(new Font("Courier", Font.PLAIN, 18));
+        EquationLabel.setBackground(Color.BLACK);
         ResultLabel.setName("ResultLabel");
         ResultLabel.setFont(new Font("Courier", Font.PLAIN, 38));
 
@@ -62,6 +63,11 @@ public class Calculator extends JFrame implements ActionListener {
         if (Objects.equals(value, "=")) {
 
             if (input.isEmpty()) return;
+            if (input.replaceAll("\\d", "").equals("")) {
+                ResultLabel.setText(input);
+                return;
+            }
+
             char lastChar = input.charAt(input.length() - 1);
 
             if (lastChar == '\u00F7' || lastChar == '\u00D7' || lastChar == '\u002B' || lastChar == '-') {
