@@ -5,8 +5,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.util.Objects;
-
+/**
+ * @author Faniel S. Abraham
+ * version 1.0
+ */
 public class Calculator extends JFrame implements ActionListener {
 
     static JLabel EquationLabel = new JLabel("", SwingConstants.RIGHT);
@@ -47,72 +49,75 @@ public class Calculator extends JFrame implements ActionListener {
             btn.addActionListener(this);
             btn.setFocusPainted(false);
             btn.setBackground(Color.lightGray);
-            //btn.setForeground(Color.RED);
             btn.setOpaque(true);
             btn.setFont(new Font("Courier", Font.PLAIN, 30));
             bottom.add(btn);
         }
     }
 
-
     public void actionPerformed(ActionEvent e) {
         String value = e.getActionCommand();
         String input = EquationLabel.getText();
         EquationLabel.setForeground(Color.black);
 
-        if (Objects.equals(value, "=")) {
+        switch (value) {
+            case "=":
+                if (input.isEmpty()) return;
+                char lastChar = input.charAt(input.length() - 1);
+                if (input.replaceAll("\\d", "").equals("")) {  //if only number, put it to result label
+                    ResultLabel.setText(input);
+                    return;
+                }
 
-            if (input.isEmpty()) return;
-            if (input.replaceAll("\\d", "").equals("")) {
-                ResultLabel.setText(input);
-                return;
-            }
+                if (lastChar == '\u00F7' || lastChar == '\u00D7' || lastChar == '\u002B' || lastChar == '-') {
+                    EquationLabel.setForeground(Color.RED.darker());  //notify user that the input has illegal format by changing colour
+                    return;
+                }
+                String result = Parser.getResult(input);
+                if (!result.equals("ERROR")) ResultLabel.setText(Parser.getResult(input));
+                break;
 
-            char lastChar = input.charAt(input.length() - 1);
+            case "C":
+                EquationLabel.setText("");
+                ResultLabel.setText("0");
+                break;
 
-            if (lastChar == '\u00F7' || lastChar == '\u00D7' || lastChar == '\u002B' || lastChar == '-') {
-                EquationLabel.setForeground(Color.RED.darker());
-                return;
-            }
-            String result = Parser.getResult(input);
-            if (!result.equals("ERROR")) ResultLabel.setText(Parser.getResult(input));
+            case "Del":
+                EquationLabel.setText(input.substring(0, input.length() - 1));
+                break;
+            case "\u00F7":
+            case "\u00D7":
+            case "\u002B":
+            case "-":
+                if (input.equals("")) return;  //expression does not start with operator
+                if (input.matches("\\D?\\.\\d")) {  //format dot character before adding operator
+                    input = "0" + input;
+                    EquationLabel.setText(input + value);
+                }
 
-        } else if (Objects.equals(value, "C")) {
-            EquationLabel.setText("");
-            ResultLabel.setText("0");
+                lastChar = input.charAt(input.length() - 1);
+                if (lastChar == '\u00F7' || lastChar == '\u00D7' || lastChar == '\u002B' || lastChar == '-') {
+                    input = input.substring(0, input.length() - 1);
+                    EquationLabel.setText(input + value);
+                } else {
+                    EquationLabel.setText(input + value);
+                }
+                break;
 
-        } else if (Objects.equals(value, "Del")) {
-            EquationLabel.setText(input.substring(0, input.length() - 1));
-
-        } else if (value.equals("\u00F7") || value.equals("\u00D7") || value.equals("\u002B") || value.equals("-")) {
-            if (input.equals("")) return;
-            if (input.matches("\\D?\\.\\d")) {
-                input = "0" + input;
+            case ".":
+                // if dot character is inserted without a digit before it, add "0" before it
+                if (input.equals("") || !Character.isDigit(input.charAt(input.length() - 1))) {
+                    input = String.format("%s%d%s", input, 0, value);
+                    EquationLabel.setText(input);
+                } else {
+                    EquationLabel.setText(input + value);
+                }
+                break;
+            default:
                 EquationLabel.setText(input + value);
-            }
-
-            char lastChar = input.charAt(input.length() - 1);
-            if (lastChar == '\u00F7' || lastChar == '\u00D7' || lastChar == '\u002B' || lastChar == '-') {
-                input = input.substring(0, input.length() - 1);
-                EquationLabel.setText(input + value);
-            } else if (lastChar == '.') {
-                EquationLabel.setText(input + 0 + value);
-            }
-            else {
-                EquationLabel.setText(input + value);
-            }
-
-        } else {
-            EquationLabel.setText(input + value);
         }
     }
 }
 
 
-//
-//                if (input.equals("") || !Character.isDigit(input.charAt(input.length() - 1))) {
-//                    input = String.format("%s%d%s", input, 0, value);
-//                    EquationLabel.setText(input);
-//                } else {
-//                    EquationLabel.setText(input + value);
-//                }
+
